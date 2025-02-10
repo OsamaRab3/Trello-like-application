@@ -2,13 +2,16 @@ const CustomError = require('../../utils/CustomError')
 const asyncErrorHandler = require('../../utils/asyncErrorHandler')
 const userService = require('../../services/userService');
 const {generateAccessToken} = require('../../utils/generateJWT')
+const {validationResult}= require('express-validator')
 
 const login = asyncErrorHandler(async (req, res, next) => {
-    const { email, password } = req.body;
 
-    if (!email || !password) {
-        return next(new CustomError("Missing email or password", 400));
+    const error = validationResult(req)
+    if(!error.isEmpty()){
+        return next(new CustomError(error.array()[0].msg, 400));
     }
+    
+    const { email, password } = req.body;
 
     const user = await userService.getUser(email, password);
 
@@ -30,10 +33,14 @@ const login = asyncErrorHandler(async (req, res, next) => {
 
 
 const signup =  asyncErrorHandler(async(req,res,next)=>{
-    const {name,email,password} = req.body;
-    if(!name||!email||!password){
-        return next(new CustomError("Invalid Data",400));
+
+    const error = validationResult(req)
+    if(!error.isEmpty()){
+        return next(new CustomError(error.array()[0].msg),400);
     }
+
+    const {name,email,password} = req.body;
+
     const user = await userService.createUser(name,email,password)
 
     const token =  generateAccessToken(user.id)
