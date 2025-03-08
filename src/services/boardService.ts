@@ -15,12 +15,13 @@
 // Get Board Members
 // Change Board Visibility (public/private)
 
-const CustomError = require("../utils/CustomError");
-const prisma = require("../utils/prisma")
+// const CustomError = require("../utils/CustomError");
+// const prisma = require("../utils/prisma")
 
+import CustomError from "../utils/CustomError";
+import prisma from "../utils/prisma";
 
-
-const createBoard = async (name ,ownerId)=>{
+const createBoard = async (name:string ,ownerId:string)=>{
     const board = await prisma.board.create({
         data:{
             name,
@@ -31,7 +32,7 @@ const createBoard = async (name ,ownerId)=>{
     return board;
 }
 
-const getBoardId = async (boardId)=>{
+const getBoardId = async (boardId:string)=>{
     const board = await prisma.board.findUnique({
         where:{
             id:parseInt(boardId)
@@ -44,7 +45,7 @@ const getBoardId = async (boardId)=>{
     return board;
 }
 
-const deleteBoardId = async (boardId)=>{
+const deleteBoardId = async (boardId:string)=>{
 
     const board =  await getBoardId(boardId);
 
@@ -57,13 +58,13 @@ const deleteBoardId = async (boardId)=>{
     return deleted
 }
 // in update board we can update name , toggle public 
-const updateBoard = async (boardId)=>{
+const updateBoard = async (boardId:string)=>{
     const board = await getBoardId(boardId);
     // update what? 
     // name 
 }
 
-const addUser = async (boardId, userId) => {
+const addUser = async (boardId:string, userId:string) => {
 
     const [board, member] = await Promise.all([
         getBoardId(boardId),
@@ -130,7 +131,7 @@ const addUser = async (boardId, userId) => {
 // }
 
 
-module.exports = {
+export default {
     getBoardId,
     createBoard,
     deleteBoardId,

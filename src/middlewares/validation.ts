@@ -1,4 +1,5 @@
-const { body } = require('express-validator');
+
+import { body } from "express-validator";
 const validationSignup = () => {
     return [
         body('name').notEmpty()
@@ -24,8 +25,16 @@ const validationLogin = () => {
     ]
 }
 
-module.exports = {
+const validationBoard = ()=>{
+    return [
+        body("name").notEmpty()
+        .withMessage("Name Board are required")
+    ]
+}
+
+export default {
     validationSignup,
     validationLogin,
+    validationBoard
 
 };

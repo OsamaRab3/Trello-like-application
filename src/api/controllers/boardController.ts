@@ -1,12 +1,21 @@
-const boardService = require('../../services/boardService')
-const {validationResult} =require('express-validator')
-const CustomError = require('../../utils/CustomError')
-const asyncErrorHandler = require('../../utils/asyncErrorHandler')
+// const boardService = require('../../services/boardService')
+// const {validationResult} =require('express-validator')
+// const CustomError = require('../../utils/CustomError')
+// const asyncErrorHandler = require('../../utils/asyncErrorHandler')
 
-const createBoard = asyncErrorHandler(async(req,res,next)=>{
+import { validationResult } from 'express-validator'
+import { Request,Response,NextFunction } from 'express'
+import boardService from '../../services/boardService'
+import CustomError from '../../utils/CustomError'
+import asyncErrorHandler from '../../utils/asyncErrorHandler'
+
+
+
+const createBoard = asyncErrorHandler(async(req:Request,res:Response,next:NextFunction):Promise<Response>=>{
     const error = validationResult(req)
     if (!error.isEmpty()){
-       return next(new CustomError(error.array()[0].msg),400)
+
+        throw new CustomError((error.array()[0].msg),400)
     }
     const {ownerId} = req.params;
     const {name} = req.body;
@@ -23,7 +32,7 @@ const createBoard = asyncErrorHandler(async(req,res,next)=>{
 
 })
 
-const getBoardId  = asyncErrorHandler(async(req,res,next)=>{
+const getBoardId  = asyncErrorHandler(async(req:Request,res:Response,next:NextFunction)=>{
     const {boardId} = req.params;
 
     if (!boardId){
@@ -41,7 +50,7 @@ const getBoardId  = asyncErrorHandler(async(req,res,next)=>{
 
 })
 
-const deleteBoard = asyncErrorHandler(async(req,res,next)=>{
+const deleteBoard = asyncErrorHandler(async(req:Request,res:Response,next:NextFunction)=>{
 
     const {boardId} = req.params;
     if (!boardId){
@@ -61,7 +70,7 @@ const deleteBoard = asyncErrorHandler(async(req,res,next)=>{
     })
 })
 
-const addUser = asyncErrorHandler(async(req,res,next)=>{
+const addUser = asyncErrorHandler(async(req:Request,res:Response,next:NextFunction)=>{
     const {boardId,userId} = req.params;
     if (!boardId||!userId){
         return next(new CustomError("Invalid Data",400))

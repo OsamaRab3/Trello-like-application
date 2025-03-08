@@ -1,15 +1,20 @@
 
-const { getUserId } = require('./userService')
-const { getCard } = require('./cardServices')
-const prisma = require('../utils/prisma')
-const CustomError = require('../utils/CustomError')
+// const { getUserId } = require('./userService')
+// const { getCard } = require('./cardServices')
+// const prisma = require('../utils/prisma')
+// const CustomError = require('../utils/CustomError')
 
+
+import userService from './userService'
+import cardServicesn from './cardServices'
+import prisma from '../utils/prisma'
+import CustomError from '../utils/CustomError'
 // const check if user already in card 
-const checkUser = async (cardId, userId) => {
+const checkUser = async (cardId:string, userId:string) => {
 
     const [user, card] = await Promise.all([
-        getUserId(userId),
-        getCard(cardId)
+        userService.getUserId(userId),
+        cardServicesn.getCard(cardId)
     ])
 
     const member = await prisma.cardMember.findFirst({
@@ -22,7 +27,7 @@ const checkUser = async (cardId, userId) => {
     return !member;
 
 }
-const addMember = async (cardId, userId) => {
+const addMember = async (cardId:string, userId:string) => {
 
     const isNotMember = await checkUser(cardId, userId);
 
@@ -39,10 +44,10 @@ const addMember = async (cardId, userId) => {
 
     return newUser;
 }
-const getCardMember = async (cardId)=>{
+const getCardMember = async (cardId:string)=>{
 
     const [card,members] =  await Promise.all([
-        getCard(cardId),
+        cardServicesn.getCard(cardId),
         prisma.cardMember.findMany({
             where:{
                 cardId:parseInt(cardId)
@@ -65,7 +70,7 @@ const getCardMember = async (cardId)=>{
 
 }
 
-module.exports = {
+export default {
     getCardMember,
     addMember,
     

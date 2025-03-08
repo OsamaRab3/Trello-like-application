@@ -1,9 +1,14 @@
-const CustomError = require('../utils/CustomError');
-const prisma = require('../utils/prisma');
-const {GetList} = require('./ListService')
+// const CustomError = require('../utils/CustomError');
+// const prisma = require('../utils/prisma');
+// const {GetList} = require('./ListService')
 
-const createCard = async (name,description,listId)=>{
-    await GetList(listId);
+
+import CustomError from "../utils/CustomError";
+import prisma from "../utils/prisma";
+import ListService from './ListService'
+
+const createCard = async (name:string,description:string,listId:string)=>{
+    await ListService.GetList(listId);
     const card = await prisma.card.create({
         data:{
             name,
@@ -15,13 +20,13 @@ const createCard = async (name,description,listId)=>{
     return card;
 };
 
-const getCard = async (cardId, listId) => {
-    await GetList(listId);
+const getCard = async (cardId:string) => {
+    // await GetList(listId);
     
     const card = await prisma.card.findFirst({
         where: {
             id: parseInt(cardId),
-            listId: parseInt(listId)
+            // listId: parseInt(listId)
         },
         select: {
             id: true,         
@@ -68,10 +73,10 @@ const getCard = async (cardId, listId) => {
 }
 
 
-const  getAllCardsList = async (listId)=>{
+const  getAllCardsList = async (listId:string)=>{
 
  const [list,cards] =await  Promise.all([
-        GetList(listId),
+        ListService.GetList(listId),
         prisma.card.findMany({
             where:{
                 listId:parseInt(listId)
@@ -86,10 +91,13 @@ const  getAllCardsList = async (listId)=>{
 
 }
 
-const UpdateCard = async (cardId, name, description) => {
+const UpdateCard = async (cardId:string, name?:string, description?:string) => {
+    // need listId 
     await getCard(cardId);
     
-    const updateData = {};
+    const  updateData :{
+        name?:string,
+        description?:string } = {};
     
     if (name !== undefined) {
         updateData.name = name;
@@ -108,7 +116,8 @@ const UpdateCard = async (cardId, name, description) => {
 
     return updatedCard;
 }
-const deleteCard = async(cardId) =>{
+
+const deleteCard = async(cardId:string) =>{
 
     await getCard(cardId);
 
@@ -122,7 +131,7 @@ const deleteCard = async(cardId) =>{
 
 }
 
-module.exports = {
+export default {
     deleteCard,
     UpdateCard,
     getAllCardsList,
@@ -130,3 +139,5 @@ module.exports = {
     createCard
 
 }
+
+

@@ -1,11 +1,12 @@
-// should use CustomeError 
-const CustomeError = require('../utils/CustomError')
-module.exports = {
-    NotFound:(req,res,next)=>{
+import CustomeError from '../utils/CustomError'
+import { Request,Response ,NextFunction} from "express";
+
+const  errorHandlers = {
+    NotFound:(req :Request ,res: Response,next:NextFunction)=>{
       const error = new CustomeError (`Cannot find ${req.originalUrl} on this server`,404)
       next(error)
     },
-    globalError:(error, req, res, next) => {
+    globalError:(error:CustomeError, req:Request, res:Response, next:NextFunction) => {
   
         error.statusCode = error.statusCode || 500;
         error.status = error.status || "error"
@@ -17,3 +18,5 @@ module.exports = {
     },
     
 }
+
+export default errorHandlers;

@@ -1,26 +1,28 @@
-const prisma = require('../utils/prisma');
-const CustomError = require('../utils/CustomError');
-const bcrypt = require('bcryptjs')
 
-const createUser = async (name, email, password) => {
+import  prisma  from "../utils/prisma";
+import CustomError from "../utils/CustomError";
+import bcrypt from 'bcryptjs'
+
+
+const createUser = async (name:string, email:String, password:String) => {
 
 
     const existingUser = await prisma.user.findUnique({
-        where: { email }
+        where: {email: String(email)  }
     });
 
     if (existingUser) {
         throw new CustomError('Email already exists', 400);
     }
 
-    const hashedPassword = await bcrypt.hash(password, 10)
+    const hashedPassword = bcrypt.hash(String(password), 10)
 
 
     const user = await prisma.user.create({
         data: {
             name,
-            email,
-            password: hashedPassword,
+            email:String(email),
+            password: String(hashedPassword),
         },
         select:{
             id:true,
@@ -34,11 +36,11 @@ const createUser = async (name, email, password) => {
 };
 
 
-const getUser = async (email, password) => {
+const getUser = async (email:String, password:String) => {
 
     const user = await prisma.user.findUnique({
         where: {
-            email: email
+            email: String(email)
         }, select: {
             id: true,
             password: true,
@@ -50,7 +52,7 @@ const getUser = async (email, password) => {
         throw new CustomError(" invild email or password ", 400)
     }
 
-    const isPasswordValid = await bcrypt.compare(password, user.password);
+    const isPasswordValid =  bcrypt.compare(String(password), user.password);
 
     if (!isPasswordValid) {
         throw new CustomError('Invalid email or password', 400);
@@ -59,10 +61,10 @@ const getUser = async (email, password) => {
 
 }
 
-const getUserId = async (userId)=>{
+const getUserId = async (userId:String)=>{
     await prisma.user.findUnique({
         where:{
-            id:parseInt(userId)
+            id:parseInt(String(userId))
         },
         select:{
             id:true,
@@ -72,7 +74,7 @@ const getUserId = async (userId)=>{
         }
     })
 }
-module.exports = {
+export default {
     createUser,
     getUser,
     getUserId

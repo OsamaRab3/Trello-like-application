@@ -1,12 +1,17 @@
-const CustomError = require("../utils/CustomError");
-const prisma = require("../utils/prisma");
-const { getBoardId } = require("./boardService");
+// const CustomError = require("../utils/CustomError");
+// const prisma = require("../utils/prisma");
+// const { getBoardId } = require("./boardService");
 
 
-const createList = async(name,boardId)=>{
+
+import CustomError from "../utils/CustomError";
+import prisma from "../utils/prisma";
+import boardService from './boardService'
+
+const createList = async(name:string,boardId:string)=>{
 
     const [board,list] =  await Promise.all([
-        getBoardId(boardId),
+        boardService.getBoardId(boardId),
         prisma.list.create({
             data:{
                 name,
@@ -24,7 +29,7 @@ const createList = async(name,boardId)=>{
 
 }
 
-const GetList =async(listId)=>{
+const GetList =async(listId:string)=>{
     const list = await prisma.list.findUnique({
         where:{
             id:parseInt(listId)
@@ -50,10 +55,10 @@ const GetList =async(listId)=>{
     return list ;
 }
 
-const GetAllLists = async (boardId)=>{
+const GetAllLists = async (boardId:string)=>{
 
     const [board,lists] = await Promise.all([
-        getBoardId(boardId),
+        boardService.getBoardId(boardId),
         prisma.list.findMany({
             where:{
                 boardId:parseInt(boardId)}
@@ -67,7 +72,7 @@ const GetAllLists = async (boardId)=>{
 
 }
 
-const UpdateList = async(listId, name) => {
+const UpdateList = async(listId:string, name: string) => {
     await GetList(listId);
     
     const updated = await prisma.list.update({
@@ -81,7 +86,7 @@ const UpdateList = async(listId, name) => {
 
     return updated;
 }
-const DeleteList = async (listId)=>{
+const DeleteList = async (listId: string)=>{
 
     await GetList(listId);
     await prisma.list.delete({
@@ -92,7 +97,7 @@ const DeleteList = async (listId)=>{
     return true
 }
 
-const getListWithCards = async(listId) => {
+const getListWithCards = async(listId: string) => {
     const [list, cards] = await Promise.all([
         GetList(listId),
         prisma.list.findUnique({
@@ -108,7 +113,7 @@ const getListWithCards = async(listId) => {
     return cards;
 }
 
-const CardCountList = async(listId) => {
+const CardCountList = async(listId: string) => {
     const [list, count] = await Promise.all([
         GetList(listId),
         prisma.card.count({
@@ -125,7 +130,7 @@ const CardCountList = async(listId) => {
     return count;
 }
 
-const clearList  = async (listId)=>{
+const clearList  = async (listId: string)=>{
     await GetList (listId);
 
     await prisma.card.deleteMany({
@@ -137,7 +142,7 @@ const clearList  = async (listId)=>{
     return true
 }
 
-module.exports = {
+export default {
     createList,
     GetList,
     GetAllLists,
